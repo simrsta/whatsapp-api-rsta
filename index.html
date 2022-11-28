@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>WHATSAPP API RSTA</head>
+    <body>
+        <div id="app">
+            <h1>Whatsapp API</h1>
+            <img src="" alt="QR Code" id="qrcode">
+            <h3>Logs:</h3>
+            <ul class="logs"></ul>
+        </div>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js" integrity="sha512-HTENHrkQ/P0NGDFd5nk6ibVtCkcM7jhr2c7GyvXp5O+4X6O5cQO9AhqFzM+MdeBivsX7Hoys2J7pp2wdgMpCvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            $(document).ready(function() {
+                var socket = io.connect('http://localhost:8001', {path: '/socket.io'});
+
+                socket.on('message', function(msg) {
+                    $('.logs').append($('<li>').text(msg));
+                });
+
+                socket.on('qr', function(src){
+                    $('#qrcode').attr('src', src);
+                });
+            });
+        </script>
+    </body>
+    <footer>2022 SIMRS RSUDTA</footer>
+</html>
