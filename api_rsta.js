@@ -43,7 +43,7 @@ const client = new Client({
             "--trace-warnings",
             ],
         },
-        // authStrategy: new LocalAuth()
+        authStrategy: new LocalAuth()
     }
 );
 
