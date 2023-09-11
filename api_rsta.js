@@ -1,6 +1,7 @@
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const express = require('express');
 const { body, validationResult} = require('express-validator');
+const bodyParse = require('body-parser');
 const socketIO = require('socket.io');
 const qrcode = require('qrcode');
 const http = require('http');
@@ -12,9 +13,19 @@ const { group } = require('console');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
+var jsonParser = bodyParse.json({limit: '35mb'});
+var encodedParser = bodyParse.urlencoded({
+    extended: true,
+    parameterLimit: 1000000,
+    limit: '35mb',
+});
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({
+    extended: true,
+    parameterLimit: 1000000,
+    limit:"50mb"
+}));
 
 const SESSION_FILE_PATH = './api_rsta_session.json';
 let sessionCfg;
@@ -133,7 +144,7 @@ app.post(
         const message = req.body.message;
 
         const isRegisteredNumber = await checkRegisteredNumber(number).catch(err => {
-            console.log('error checkRegisteredNumber '+err);
+            console.log('-- error checkRegisteredNumber ('+number+'): '+err);
         });
         
         if(!isRegisteredNumber) {
@@ -161,7 +172,7 @@ app.post(
 
 // send pdf
 app.post(
-    '/send-pdf-base64', 
+    '/send-pdf-base64',
     [body("number").notEmpty(), body("pdf_base64").notEmpty()], 
     async(req, res) => {
 
@@ -169,7 +180,9 @@ app.post(
         const base64 = req.body.pdf_base64;
         const file_name = req.body.pdf_filename;
 
-        const isRegisteredNumber = await checkRegisteredNumber(number);
+        const isRegisteredNumber = await checkRegisteredNumber(number).catch(err => {
+            console.log('-- error checkRegisteredNumber ('+number+'): '+err);
+        });
         
         if(!isRegisteredNumber) {
             return res.status(422).json({
